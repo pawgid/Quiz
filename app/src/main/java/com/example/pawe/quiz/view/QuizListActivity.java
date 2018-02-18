@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -19,7 +22,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import controller.HttpHandler;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 /**
  * Created by Paweł on 2018-02-17.
@@ -36,6 +43,8 @@ public class QuizListActivity extends AppCompatActivity {
 
     ArrayList<HashMap<String, String>> quizList;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,24 +53,29 @@ public class QuizListActivity extends AppCompatActivity {
         quizList = new ArrayList<>();
 
         lv = (ListView) findViewById(R.id.list);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                
+            }
+        });
 
-        new GetContacts().execute();
+        new GetQuizes().execute();
     }
 
     /**
      * Async task class to get json by making HTTP call
      */
-    private class GetContacts extends AsyncTask<Void, Void, Void> {
+    private class GetQuizes extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
+//             Showing progress dialog
             pDialog = new ProgressDialog(QuizListActivity.this);
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
-
         }
 
         @Override
@@ -114,7 +128,7 @@ public class QuizListActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(getApplicationContext(),
                                     "Json parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG)
+                                    LENGTH_LONG)
                                     .show();
                         }
                     });
@@ -127,7 +141,7 @@ public class QuizListActivity extends AppCompatActivity {
                     public void run() {
                         Toast.makeText(getApplicationContext(),
                                 "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG)
+                                LENGTH_LONG)
                                 .show();
                     }
                 });
@@ -141,6 +155,8 @@ public class QuizListActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Dismiss the progress dialog
+
+
             if (pDialog.isShowing())
                 pDialog.dismiss();
             /**
@@ -148,12 +164,15 @@ public class QuizListActivity extends AppCompatActivity {
              * */
             ListAdapter adapter = new SimpleAdapter(
                     QuizListActivity.this, quizList,
-                    R.layout.list_item, new String[]{"title", "content",
-                    "url"}, new int[]{R.id.title,
-                    R.id.content, R.id.urlTextView});
+                    R.layout.list_item, new String[]{"title", "content", "url"}, new int[]{R.id.title,
+                    R.id.content});
 
             lv.setAdapter(adapter);
         }
 
+
+
     }
+
+
 }
