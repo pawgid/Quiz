@@ -80,33 +80,32 @@ public class QuizListActivity extends AppCompatActivity {
                     // Getting JSON Array node
                     JSONArray quizList = jsonObj.getJSONArray("items");
 
-                    // looping through All Contacts
+                    // looping through All quizes
                     for (int i = 0; i < quizList.length(); i++) {
                         JSONObject quiz = quizList.getJSONObject(i);
 
-//                        JSONObject vehicle = ((JSONObject)new JSONObject(result)).getJSONObject("GetJSONObjectResult");
-//                        //a more easy to read
-//                        JSONObject container = new JSONObject(result);
-//                        JSONObject vehicle = container.getJSONObject("GetJSONObjectResult");
+                        JSONObject mainPhoto = quiz.getJSONObject("mainPhoto");
 
                         String id = quiz.getString("id");
                         String title = quiz.getString("title");
                         String content = quiz.getString("content");
                         String questions = quiz.getString("questions");
                         String type = quiz.getString("type");
+                        String photoUrl = mainPhoto.getString("url");
 
                         // tmp hash map for single quiz
-                        HashMap<String, String> singleQuizeRow = new HashMap<>();
+                        HashMap<String, String> singleQuizRow = new HashMap<>();
 
                         // adding each child node to HashMap key => value
-                        singleQuizeRow.put("id", id);
-                        singleQuizeRow.put("title", title);
-                        singleQuizeRow.put("content", content);
-                        singleQuizeRow.put("questions", questions);
-                        singleQuizeRow.put("type", type);
+                        singleQuizRow.put("id", id);
+                        singleQuizRow.put("title", title);
+                        singleQuizRow.put("content", content);
+                        singleQuizRow.put("questions", questions);
+                        singleQuizRow.put("type", type);
+                        singleQuizRow.put("url", photoUrl);
 
                         // adding quiz to quiz list
-                        QuizListActivity.this.quizList.add(singleQuizeRow);
+                        QuizListActivity.this.quizList.add(singleQuizRow);
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -150,8 +149,8 @@ public class QuizListActivity extends AppCompatActivity {
             ListAdapter adapter = new SimpleAdapter(
                     QuizListActivity.this, quizList,
                     R.layout.list_item, new String[]{"title", "content",
-                    "mobile"}, new int[]{R.id.title,
-                    R.id.content, R.id.mobile});
+                    "url"}, new int[]{R.id.title,
+                    R.id.content, R.id.urlTextView});
 
             lv.setAdapter(adapter);
         }
