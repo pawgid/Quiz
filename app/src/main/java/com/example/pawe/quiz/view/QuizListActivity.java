@@ -32,16 +32,16 @@ public class QuizListActivity extends AppCompatActivity {
     private ListView lv;
 
     // URL to get contacts JSON
-    private static String url = "http://demos.vetbossel.in/ajson/sample";
+    private static String url = "http://quiz.o2.pl/api/v1/quizzes/0/100";
 
-    ArrayList<HashMap<String, String>> contactList;
+    ArrayList<HashMap<String, String>> quizList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quiz_list);
 
-        contactList = new ArrayList<>();
+        quizList = new ArrayList<>();
 
         lv = (ListView) findViewById(R.id.list);
 
@@ -78,35 +78,35 @@ public class QuizListActivity extends AppCompatActivity {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
                     // Getting JSON Array node
-                    JSONArray contacts = jsonObj.getJSONArray("contacts");
+                    JSONArray quizList = jsonObj.getJSONArray("items");
 
                     // looping through All Contacts
-                    for (int i = 0; i < contacts.length(); i++) {
-                        JSONObject c = contacts.getJSONObject(i);
+                    for (int i = 0; i < quizList.length(); i++) {
+                        JSONObject quiz = quizList.getJSONObject(i);
 
-                        String id = c.getString("id");
-                        String name = c.getString("name");
-                        String email = c.getString("email");
-                        String address = c.getString("address");
-                        String gender = c.getString("gender");
+//                        JSONObject vehicle = ((JSONObject)new JSONObject(result)).getJSONObject("GetJSONObjectResult");
+//                        //a more easy to read
+//                        JSONObject container = new JSONObject(result);
+//                        JSONObject vehicle = container.getJSONObject("GetJSONObjectResult");
 
-                        // Phone node is JSON Object
-                        JSONObject phone = c.getJSONObject("phone");
-                        String mobile = phone.getString("mobile");
-                        String home = phone.getString("home");
-                        String office = phone.getString("office");
+                        String id = quiz.getString("id");
+                        String title = quiz.getString("title");
+                        String content = quiz.getString("content");
+                        String questions = quiz.getString("questions");
+                        String type = quiz.getString("type");
 
-                        // tmp hash map for single contact
-                        HashMap<String, String> contact = new HashMap<>();
+                        // tmp hash map for single quiz
+                        HashMap<String, String> singleQuizeRow = new HashMap<>();
 
                         // adding each child node to HashMap key => value
-                        contact.put("id", id);
-                        contact.put("name", name);
-                        contact.put("email", email);
-                        contact.put("mobile", mobile);
+                        singleQuizeRow.put("id", id);
+                        singleQuizeRow.put("title", title);
+                        singleQuizeRow.put("content", content);
+                        singleQuizeRow.put("questions", questions);
+                        singleQuizeRow.put("type", type);
 
-                        // adding contact to contact list
-                        contactList.add(contact);
+                        // adding quiz to quiz list
+                        QuizListActivity.this.quizList.add(singleQuizeRow);
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -148,10 +148,10 @@ public class QuizListActivity extends AppCompatActivity {
              * Updating parsed JSON data into ListView
              * */
             ListAdapter adapter = new SimpleAdapter(
-                    QuizListActivity.this, contactList,
-                    R.layout.list_item, new String[]{"name", "email",
-                    "mobile"}, new int[]{R.id.name,
-                    R.id.email, R.id.mobile});
+                    QuizListActivity.this, quizList,
+                    R.layout.list_item, new String[]{"title", "content",
+                    "mobile"}, new int[]{R.id.title,
+                    R.id.content, R.id.mobile});
 
             lv.setAdapter(adapter);
         }
